@@ -1,0 +1,18 @@
+So there are two watchdog microservices to be setup, a primary  and a secondary. Both are their own micrservice deployed seperately
+The primary one is the one to observe the status of all the other microservices, so its going to observe data_collection, data_retrival, data_analytics, and the secondary watch dog
+It will send out an email to the respective recipients in the case one of the microservices goes down once until it goes back up.
+So if i check if a microservice goes down eveyr 5 minutes. Now I don't want to send out an email every 5 minutes. I just want it to send one email and then not send another one UNTIL the microservice that went down goes back up. 
+When it does go back up, I want the watchdog to send an email stating that the microservice is back up.
+
+Now onto the secondary watchdog.
+The main purpose of this is to check if the primary watchdog is online or not.
+If the secondary watchdog detects that the primary watchdog is not online, it takes on the responsibility of the priamry watchdog of observing data_collection, data_retrival, data_analytics.
+If the secondary watchdog continues to check primary watchdog to see if it is back online. If the primary watchdog is backonline, it drops all the responsibilities it took over for the primary watchdog.
+And then it just goes back to check to its main purpose which is to check if the watchdog is online.
+
+
+MongoDB.
+Uses of the function for primary watchdog:
+1) When the microservice starts up, use get_all_microservices to use as the the value of "microservices" array
+2) Use update_recipients in accord to the changes made to the recipients specific to the given microservice accordingly depending of the change is caused by the endpoint "subscribe" or "unsubscribe"
+3) Use update_prev_status to update the value whenever it changes, no need to send anything to the db if there is no change. The microservice for which the value is updated is dependent on the thread thats calling it
